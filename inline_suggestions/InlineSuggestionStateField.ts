@@ -3,12 +3,11 @@ import { Suggestion } from "./Suggestion";
 
 
 // state field holding the current suggestion
-export const InlineSuggestionState = StateField.define<Suggestion>({
+export const suggestionField = StateField.define<Suggestion>({
 	create(state: EditorState) : Suggestion {
 		return {
-			complete_suggestion: "",
-			display_suggestion: "",
-			accept_hook: () => {},
+			suggestionText: "Yallah",
+			acceptHook: () => {},
 		};
 	},
 
@@ -17,10 +16,7 @@ export const InlineSuggestionState = StateField.define<Suggestion>({
 
 		for (let effect of transaction.effects) {
 			if (effect.is(InlineSuggestionEffect)) {
-				// Only update the suggestion if the doc is the same as the current doc
-				if (effect.value.doc == null || effect.value.doc == transaction.state.doc) {
-					newState = effect.value.suggestion;
-				}
+				newState = effect.value.suggestion;
 			}
 		}
 		return newState;
@@ -29,6 +25,6 @@ export const InlineSuggestionState = StateField.define<Suggestion>({
 
 // state effect to update the suggestion
 export const InlineSuggestionEffect = StateEffect.define<{
-	suggestion: Suggestion | null;
+	suggestion: Suggestion;
 	doc: Text | null;
 }>();

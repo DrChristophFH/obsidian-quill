@@ -1,4 +1,4 @@
-import { WidgetType } from "@codemirror/view";
+import { EditorView, WidgetType } from "@codemirror/view";
 
 // simple widget that displays a suggestion
 export class InlineSuggestionWidget extends WidgetType {
@@ -9,10 +9,10 @@ export class InlineSuggestionWidget extends WidgetType {
 		this.suggestion = suggestion;
 	}
 
-	toDOM() {
+	toDOM(view: EditorView): HTMLElement {
 		const div = document.createElement("span");
 		div.style.opacity = "0.4";
-		div.className = "cm-inline-suggestion";
+		div.className = "inline-suggestion";
 		div.textContent = this.suggestion;
 		return div;
 	}

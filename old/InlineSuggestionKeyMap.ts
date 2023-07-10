@@ -6,9 +6,10 @@ import {
 	SelectionRange,
 	EditorState,
 } from "@codemirror/state";
-import { InlineSuggestionState } from "./InlineSuggestionStateField";
-import { Suggestion } from "./Suggestion";
-import { InlineFetchFn } from "./InlineFetchFn";
+import { suggestionField } from "../inline_suggestions/InlineSuggestionStateField";
+import { Suggestion } from "../inline_suggestions/Suggestion";
+
+type InlineFetchFn = (state: EditorState) => Promise<Suggestion>;
 
 export class InlineSuggestionKeyMap {
 	suggestFn: InlineFetchFn | null;
@@ -29,7 +30,7 @@ export class InlineSuggestionKeyMap {
 	}
 
 	run = (view: EditorView) => {
-		const suggestion: Suggestion = view.state.field(InlineSuggestionState);
+		const suggestion: Suggestion = view.state.field(suggestionField);
 
 		// If there is no suggestion, do nothing and let the default keymap handle it
 		if (!suggestion) {
@@ -39,12 +40,12 @@ export class InlineSuggestionKeyMap {
 		view.dispatch({
 			...this.insertCompletionText(
 				view.state,
-				suggestion.complete_suggestion,
+				suggestion.suggestionText,
 				view.state.selection.main.head,
 				view.state.selection.main.head
-			),
+			)
 		});
-		suggestion.accept_hook?.();
+		suggestion.acceptHook?.();
 		return true;
 	};
 

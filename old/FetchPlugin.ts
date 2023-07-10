@@ -1,5 +1,5 @@
-import { PluginValue, ViewUpdate } from "@codemirror/view";
-import { InlineSuggestionEffect } from "./InlineSuggestionStateField";
+import { PluginValue, ViewUpdate, ViewPlugin } from "@codemirror/view";
+import { InlineSuggestionEffect } from "../inline_suggestions/InlineSuggestionStateField";
 
 export class FetchPlugin implements PluginValue {
 	fetchFn;
@@ -23,4 +23,10 @@ export class FetchPlugin implements PluginValue {
 			}),
 		});
 	}
+}
+
+export function fetchPluginViewPluginWrapper(fetchFn: any) {
+	return ViewPlugin.define((view) => {
+		return new FetchPlugin(fetchFn);
+	});
 }

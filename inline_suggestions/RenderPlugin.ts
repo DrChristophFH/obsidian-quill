@@ -1,41 +1,33 @@
-import { PluginValue, PluginSpec, ViewPlugin } from "@codemirror/view";
+import { PluginValue, PluginSpec } from "@codemirror/view";
 import { DecorationSet, Decoration } from "@codemirror/view";
 import { ViewUpdate, EditorView } from "@codemirror/view";
 import { InlineSuggestionWidget } from "./InlineSuggestionWidget";
-import { InlineSuggestionState } from "./InlineSuggestionStateField";
-import { Suggestion } from "./Suggestion";
+import { suggestionField } from "./InlineSuggestionStateField";
 
 export class RenderPlugin implements PluginValue {
 	decorations: DecorationSet;
 
 	constructor() {
-		// Empty decorations
 		this.decorations = Decoration.none;
 	}
 
 	update(update: ViewUpdate) {
-		const suggestion: Suggestion | null = update.state.field(InlineSuggestionState);
-		
-    if (!suggestion) {
-			this.decorations = Decoration.none;
-			return;
+		if (update.docChanged || update.viewportChanged) {
+			this.decorations = this.buildInlineSuggestionDecoration(
+				update.view,
+				update.state.field(suggestionField).suggestionText
+			);
 		}
-
-		this.decorations = this.inlineSuggestionDecoration(
-			update.view,
-			suggestion.display_suggestion
-		);
 	}
 
-  inlineSuggestionDecoration(view: EditorView, prefix: string) {
+  buildInlineSuggestionDecoration(view: EditorView, suggestionText: string) {
     const pos = view.state.selection.main.head;
-    const widgets = [];
     const widget = Decoration.widget({
-      widget: new InlineSuggestionWidget(prefix),
+      widget: new InlineSuggestionWidget(suggestionText),
       side: 1,
     });
-    widgets.push(widget.range(pos));
-    return Decoration.set(widgets);
+		const decorations = Decoration.set(widget.range(pos));
+    return decorations;
   }
 }
 
