@@ -1,4 +1,5 @@
 import { StateField, StateEffect, Transaction, EditorState, Text } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
 import { Suggestion } from "./Suggestion";
 
 
@@ -15,7 +16,7 @@ export const suggestionField = StateField.define<Suggestion>({
 		let newState = oldState;
 
 		for (let effect of transaction.effects) {
-			if (effect.is(InlineSuggestionEffect)) {
+			if (effect.is(SetSuggestionEffect)) {
 				newState = effect.value.suggestion;
 			}
 		}
@@ -24,7 +25,12 @@ export const suggestionField = StateField.define<Suggestion>({
 });
 
 // state effect to update the suggestion
-export const InlineSuggestionEffect = StateEffect.define<{
+export const SetSuggestionEffect = StateEffect.define<{
 	suggestion: Suggestion;
-	doc: Text | null;
 }>();
+
+export function setSuggestion(view: EditorView, sug: Suggestion) {
+  view.dispatch({
+    effects: [SetSuggestionEffect.of({ suggestion: sug })],
+  });
+}
