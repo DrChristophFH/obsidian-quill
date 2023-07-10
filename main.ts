@@ -1,7 +1,8 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { ViewPlugin, PluginValue, ViewUpdate, EditorView } from '@codemirror/view';
 import { RenderPlugin, renderPluginSpec } from 'inline_suggestions/RenderPlugin';
-import { suggestionField } from 'inline_suggestions/InlineSuggestionStateField';
+import { suggestionField, setSuggestion } from 'inline_suggestions/InlineSuggestionStateField';
+
 
 interface QuillSettings {
 	mySetting: string;
@@ -16,6 +17,19 @@ export default class Quill extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		this.addCommand({
+			id: 'sample-editor-command',
+			name: 'Sample editor command',
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				// @ts-expect-error, not typed
+				const editorView = view.editor.cm as EditorView;
+				setSuggestion(editorView, {
+					suggestionText: editor.getSelection(),
+					acceptHook: () => {},
+				});
+			}
+		});
 
 		this.registerEditorExtension(ViewPlugin.fromClass(RenderPlugin, renderPluginSpec));
 		this.registerEditorExtension(suggestionField);
