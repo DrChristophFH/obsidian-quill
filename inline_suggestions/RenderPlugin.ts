@@ -12,11 +12,14 @@ export class RenderPlugin implements PluginValue {
 	}
 
 	update(update: ViewUpdate) {
-		if (update.docChanged || update.viewportChanged) {
-			this.decorations = this.buildInlineSuggestionDecoration(
+		const suggestionText = update.state.field(suggestionField).suggestionText;
+		if (suggestionText.length > 0) {
+			this.decorations = this.buildInlineSuggestionDecoration (
 				update.view,
-				update.state.field(suggestionField).suggestionText
+				suggestionText
 			);
+		} else {
+			this.decorations = Decoration.none;
 		}
 	}
 

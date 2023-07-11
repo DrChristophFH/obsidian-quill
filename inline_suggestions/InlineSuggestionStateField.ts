@@ -7,7 +7,7 @@ import { Suggestion } from "./Suggestion";
 export const suggestionField = StateField.define<Suggestion>({
 	create(state: EditorState) : Suggestion {
 		return {
-			suggestionText: "Yallah",
+			suggestionText: "This is a test sentence.",
 			acceptHook: () => {},
 		};
 	},
@@ -18,19 +18,34 @@ export const suggestionField = StateField.define<Suggestion>({
 		for (let effect of transaction.effects) {
 			if (effect.is(SetSuggestionEffect)) {
 				newState = effect.value.suggestion;
+			} else if (effect.is(SetSuggestionTextEffect)) {
+				newState = {
+					...newState,
+					suggestionText: effect.value.suggestionText,
+				};
 			}
 		}
 		return newState;
 	},
 });
 
-// state effect to update the suggestion
+// state effect to update the whole suggestion
 export const SetSuggestionEffect = StateEffect.define<{
 	suggestion: Suggestion;
+}>();
+
+export const SetSuggestionTextEffect = StateEffect.define<{
+	suggestionText: string;
 }>();
 
 export function setSuggestion(view: EditorView, sug: Suggestion) {
   view.dispatch({
     effects: [SetSuggestionEffect.of({ suggestion: sug })],
   });
+}
+
+export function setSuggestionText(view: EditorView, sugText: string) {
+	view.dispatch({
+		effects: [SetSuggestionTextEffect.of({ suggestionText: sugText })],
+	});
 }

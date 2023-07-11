@@ -1,5 +1,5 @@
 import { PluginValue, ViewUpdate, ViewPlugin } from "@codemirror/view";
-import { InlineSuggestionEffect } from "../inline_suggestions/InlineSuggestionStateField";
+import { SetSuggestionEffect } from "../inline_suggestions/InlineSuggestionStateField";
 
 export class FetchPlugin implements PluginValue {
 	fetchFn;
@@ -17,7 +17,7 @@ export class FetchPlugin implements PluginValue {
 
 		const result = await this.fetchFn(update.state);
 		update.view.dispatch({
-			effects: InlineSuggestionEffect.of({
+			effects: SetSuggestionEffect.of({
 				suggestion: result,
 				doc: doc,
 			}),
