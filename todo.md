@@ -1,7 +1,6 @@
 # Context settings:
 - TODO add command to set a specific note as context for prompt 
 - TODO add special character sequence to enable comments in context files 
-- TODO add setting to set context length for text before cursor 
 - TODO add setting to set context length to sentence or paragraph or section (section is till the last heading) 
 - TODO add setting to see context files 
 - TODO add setting to set and remove context files 

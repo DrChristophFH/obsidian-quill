@@ -5,13 +5,16 @@ import { suggestionField, setSuggestion, setSuggestionText } from 'inline_sugges
 import { QuillMenuView, VIEW_TYPE_QUILL_MENU } from 'side_view/QuillView';
 import { Fetcher, MockFetcher } from 'gpt/Fetcher';
 import { ContextFiles } from 'gpt/ContextFiles';
+import { QuillSettingTab } from 'settings/SettingTab';
 
 interface QuillSettings {
 	mySetting: string;
+	contextBeforeCursor: number;
 }
 
 const DEFAULT_SETTINGS: QuillSettings = {
-	mySetting: 'default'
+	mySetting: 'default',
+	contextBeforeCursor: 100,
 }
 
 export default class Quill extends Plugin {
@@ -23,6 +26,9 @@ export default class Quill extends Plugin {
 		await this.loadSettings();
 
 		this.registerView(VIEW_TYPE_QUILL_MENU, (leaf) => new QuillMenuView(leaf));
+
+		// This adds a settings tab so the user can configure various aspects of the plugin
+		this.addSettingTab(new QuillSettingTab(this.app, this));
 		
 		this.addRibbonIcon("feather", "Activate Quill Menu", () => {
       this.activateQuillMenuView();
