@@ -31,7 +31,7 @@ export default class Quill extends Plugin {
 					if (!checking) {
 						// insert first word from suggestion
 						const firstWord = suggestionText.split(' ')[0] + ' ';
-						editor.replaceSelection(firstWord);
+						editor.replaceRange(firstWord, editor.getCursor());
 						// update suggestion state
 						// @ts-expect-error, not typed
 						const editorView = view.editor.cm as EditorView;
@@ -55,7 +55,7 @@ export default class Quill extends Plugin {
 				if (suggestionText.length > 0) {
 					if (!checking) {
 						// insert whole suggestion
-						editor.replaceSelection(suggestionText);
+						editor.replaceRange(suggestionText, editor.getCursor());
 						// update suggestion state to empty
 						setSuggestionText(editorView, '');
 					}
