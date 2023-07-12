@@ -88,8 +88,8 @@ export default class Quill extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'mark-current-file-as-context-file',
-			name: 'Mark current file as context file',
+			id: 'add-current-file-as-context-file',
+			name: 'Add current file as context file',
 			checkCallback: (checking: boolean) => {
 				const activeFile = app.workspace.getActiveFile();
 
