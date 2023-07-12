@@ -2,7 +2,7 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 import { ViewPlugin, PluginValue, ViewUpdate, EditorView } from '@codemirror/view';
 import { RenderPlugin, renderPluginSpec } from 'inline_suggestions/RenderPlugin';
 import { suggestionField, setSuggestion, setSuggestionText } from 'inline_suggestions/InlineSuggestionStateField';
-
+import { QuillMenuView, VIEW_TYPE_QUILL_MENU } from 'side_view/QuillView';
 
 interface QuillSettings {
 	mySetting: string;
@@ -17,6 +17,12 @@ export default class Quill extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		this.registerView(VIEW_TYPE_QUILL_MENU, (leaf) => new QuillMenuView(leaf));
+		
+		this.addRibbonIcon("feather", "Activate Quill Menu", () => {
+      this.activateQuillMenuView();
+    });
 
 		this.addCommand({
 			id: 'accept-word-from-suggestion',
@@ -112,6 +118,19 @@ export default class Quill extends Plugin {
 	}
 
 	onunload() {}
+
+	async activateQuillMenuView() {
+    this.app.workspace.detachLeavesOfType(VIEW_TYPE_QUILL_MENU);
+
+    await this.app.workspace.getRightLeaf(false).setViewState({
+      type: VIEW_TYPE_QUILL_MENU,
+      active: true,
+    });
+
+    this.app.workspace.revealLeaf(
+      this.app.workspace.getLeavesOfType(VIEW_TYPE_QUILL_MENU)[0]
+    );
+  }
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
