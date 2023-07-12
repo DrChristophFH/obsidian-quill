@@ -4,6 +4,7 @@ import { RenderPlugin, renderPluginSpec } from 'inline_suggestions/RenderPlugin'
 import { suggestionField, setSuggestion, setSuggestionText } from 'inline_suggestions/InlineSuggestionStateField';
 import { QuillMenuView, VIEW_TYPE_QUILL_MENU } from 'side_view/QuillView';
 import { Fetcher, MockFetcher } from 'gpt/Fetcher';
+import { ContextFiles } from 'gpt/ContextFiles';
 
 interface QuillSettings {
 	mySetting: string;
@@ -16,6 +17,7 @@ const DEFAULT_SETTINGS: QuillSettings = {
 export default class Quill extends Plugin {
 	settings: QuillSettings;
 	fetcher: Fetcher = new MockFetcher();
+	contextFiles: ContextFiles = new ContextFiles;
 
 	async onload() {
 		await this.loadSettings();
@@ -84,6 +86,25 @@ export default class Quill extends Plugin {
 				this.fetcher.fetch(prompt).then((suggestion) => setSuggestionText(editorView, suggestion));
 			},
 		});
+
+		this.addCommand({
+			id: 'mark-current-file-as-context-file',
+			name: 'Mark current file as context file',
+			checkCallback: (checking: boolean) => {
+				const activeFile = app.workspace.getActiveFile();
+
+				if (activeFile !== null) {
+					if (!checking) {
+						this.contextFiles.add(activeFile.path);
+						this.contextFiles.getAll().forEach((path: string) => {
+							console.log(path);
+						});
+					}
+					return true;
+				}
+				return false;
+			},
+		})
 
 		this.registerEditorExtension(ViewPlugin.fromClass(RenderPlugin, renderPluginSpec));
 		this.registerEditorExtension(suggestionField);
