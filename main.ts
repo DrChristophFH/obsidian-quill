@@ -70,11 +70,11 @@ export default class Quill extends Plugin {
 			name: 'Generate a suggestion',
 			hotkeys: [{ modifiers: ["Mod"], key: "e" }],
 			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
-				if ( ) { // cursor is in editor
+				if ( false ) { // TODO cursor is in editor
 					if (!checking) {
-						// get context for prompt
-						// make api call to get suggestion
-						// update suggestion text
+						// TODO get context for prompt
+						// TODO make api call to get suggestion
+						// TODO update suggestion text
 					}
 					return true
 				}
@@ -82,13 +82,24 @@ export default class Quill extends Plugin {
 			},
 		});
 
-		// TODO add command to set file as context for prompt
+		// Context settings
+		// TODO add command to set a specific note as context for prompt
+		// TODO add special character sequence to enable comments in context files
 		// TODO add setting to set context length for text before cursor
-		// TODO add setting to set context length to sentence or paragraph or section (to heading)
+		// TODO add setting to set context length to sentence or paragraph or section (section is till the last heading)
 		// TODO add setting to see context files
 		// TODO add setting to set and remove context files
-		// TODO add settings for api key 
-		// TODO add setting for model parameters
+		// TODO add setting to set price limit based on estimated price of prompts
+		// TODO add command to let gpt compress context files
+		// Model settings
+		// TODO add settings for api key (hidden via password field)
+		// TODO add settings for model parameters
+		// Side Tab view
+		// TODO add show and edit for important settings that change frequently (context files, context length, model parameters)
+			// keep context files in a list with enabled/disabled toggle and remove button for fast configuration
+		// TODO add token estimate for context to side tab view (based on OpenAI estimate function)
+		// TODO add price estimate for context to side tab view (based on token estimate and configurable api price)
+		// TODO add request statistics to side tab view (how many requests sent, how many tokens used)
 
 		this.registerEditorExtension(ViewPlugin.fromClass(RenderPlugin, renderPluginSpec));
 		this.registerEditorExtension(suggestionField);
