@@ -3,6 +3,7 @@ import { ViewPlugin, PluginValue, ViewUpdate, EditorView } from '@codemirror/vie
 import { RenderPlugin, renderPluginSpec } from 'inline_suggestions/RenderPlugin';
 import { suggestionField, setSuggestion, setSuggestionText } from 'inline_suggestions/InlineSuggestionStateField';
 import { QuillMenuView, VIEW_TYPE_QUILL_MENU } from 'side_view/QuillView';
+import { Fetcher, MockFetcher } from 'gpt/Fetcher';
 
 interface QuillSettings {
 	mySetting: string;
@@ -14,6 +15,7 @@ const DEFAULT_SETTINGS: QuillSettings = {
 
 export default class Quill extends Plugin {
 	settings: QuillSettings;
+	fetcher: Fetcher = new MockFetcher();
 
 	async onload() {
 		await this.loadSettings();
@@ -37,7 +39,7 @@ export default class Quill extends Plugin {
 					if (!checking) {
 						// insert first word from suggestion
 						const firstWord = suggestionText.split(' ')[0] + ' ';
-						editor.replaceRange(firstWord, editor.getCursor());
+						editor.replaceSelection(firstWord);
 						// update suggestion state
 						// @ts-expect-error, not typed
 						const editorView = view.editor.cm as EditorView;
@@ -61,7 +63,7 @@ export default class Quill extends Plugin {
 				if (suggestionText.length > 0) {
 					if (!checking) {
 						// insert whole suggestion
-						editor.replaceRange(suggestionText, editor.getCursor());
+						editor.replaceSelection(suggestionText);
 						// update suggestion state to empty
 						setSuggestionText(editorView, '');
 					}
@@ -75,16 +77,11 @@ export default class Quill extends Plugin {
 			id: 'generate-suggestion',
 			name: 'Generate a suggestion',
 			hotkeys: [{ modifiers: ["Mod"], key: "e" }],
-			editorCheckCallback: (checking: boolean, editor: Editor, view: MarkdownView) => {
-				if ( false ) { // TODO cursor is in editor
-					if (!checking) {
-						// TODO get context for prompt
-						// TODO make api call to get suggestion
-						// TODO update suggestion text
-					}
-					return true
-				}
-				return false;
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				// @ts-expect-error, not typed
+				const editorView = view.editor.cm as EditorView;
+				const prompt = 'This is a prompt'; // TODO get context for prompt
+				this.fetcher.fetch(prompt).then((suggestion) => setSuggestionText(editorView, suggestion));
 			},
 		});
 
