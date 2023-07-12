@@ -1,5 +1,6 @@
-import Quill from 'main';
 import { App, PluginSettingTab, Setting } from 'obsidian';
+import Quill from 'main';
+import { ContextBeforeCursorRange as ContextRange } from 'settings/Settings';
 
 export class QuillSettingTab extends PluginSettingTab {
 	plugin: Quill;
@@ -29,7 +30,7 @@ export class QuillSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-				.setName('Context before cursor')
+				.setName('Context before cursor (characters)')
 				.setDesc('Determines how many characters before the cursor are supplied as context to the prompt.')
 				.addSlider((slider) => {
 						slider
@@ -41,6 +42,22 @@ export class QuillSettingTab extends PluginSettingTab {
 										await this.plugin.saveSettings();
 								});
 						slider.sliderEl.style.width = '25em';
+				});
+
+				new Setting(containerEl)
+				.setName('Context before cursor (ranges)')
+				.setDesc('Determines whether the context should be the sentence, paragraph or section (current heading).')
+				.addDropdown((dropdown) => {
+						dropdown
+								.addOption(ContextRange.Characters, 'Character count only')
+								.addOption(ContextRange.Sentence, 'Sentence')
+								.addOption(ContextRange.Paragraph, 'Paragraph')
+								.addOption(ContextRange.Section, 'Section')
+								.setValue(this.plugin.settings.contextBeforeCursorRange)
+								.onChange(async (value) => {
+										this.plugin.settings.contextBeforeCursorRange = value as ContextRange;
+										await this.plugin.saveSettings();
+								});
 				});
 	}
 }
