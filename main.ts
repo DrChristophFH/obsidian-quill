@@ -6,16 +6,9 @@ import { QuillMenuView, VIEW_TYPE_QUILL_MENU } from 'side_view/QuillView';
 import { Fetcher, MockFetcher } from 'gpt/Fetcher';
 import { ContextFiles } from 'gpt/ContextFiles';
 import { QuillSettingTab } from 'settings/SettingTab';
+import { QuillSettings, DEFAULT_SETTINGS } from 'settings/Settings';
 
-interface QuillSettings {
-	mySetting: string;
-	contextBeforeCursor: number;
-}
 
-const DEFAULT_SETTINGS: QuillSettings = {
-	mySetting: 'default',
-	contextBeforeCursor: 100,
-}
 
 export default class Quill extends Plugin {
 	settings: QuillSettings;
