@@ -11,7 +11,7 @@ import { QuillSettings, DEFAULT_SETTINGS } from "settings/Settings";
 export default class Quill extends Plugin {
   settings: QuillSettings;
   fetcher: Fetcher = new MockFetcher();
-  contextFileList: ContextFileList = new ContextFileList();
+  
 
   async onload() {
     await this.loadSettings();
@@ -112,8 +112,8 @@ export default class Quill extends Plugin {
 
         if (activeFile !== null) {
           if (!checking) {
-            this.contextFileList.add(activeFile.path);
-			this.contextFileList.getText(this.app).then((text: string) => {
+            this.settings.contextFileList.add(activeFile.path);
+			this.settings.contextFileList.getText(this.app).then((text: string) => {
 				console.log(text);
 			})
           }

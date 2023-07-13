@@ -69,7 +69,7 @@ export class ContextFileList {
   
     let text: string = "";
     contents.forEach((content: string) => {
-      text += content;
+      text += content + '\n';
     });
   
     return text;
