@@ -1,4 +1,4 @@
-import { Editor, MarkdownView, Plugin, TFile } from "obsidian";
+import { Editor, MarkdownView, Notice, Plugin, TFile } from "obsidian";
 import { ViewPlugin, EditorView } from "@codemirror/view";
 import { RenderPlugin, renderPluginSpec } from "inline_suggestions/RenderPlugin";
 import { suggestionField, setSuggestionText } from "inline_suggestions/InlineSuggestionStateField";
@@ -113,9 +113,9 @@ export default class Quill extends Plugin {
         if (activeFile !== null) {
           if (!checking) {
             this.settings.contextFileList.add(activeFile.path);
-			this.settings.contextFileList.getText(this.app).then((text: string) => {
-				console.log(text);
-			})
+            this.settings.contextFileList.getText(this.app).then((text: string) => {
+              console.log(text);
+            })
           }
           return true;
         }

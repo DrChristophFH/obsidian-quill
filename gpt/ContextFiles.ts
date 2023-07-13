@@ -1,4 +1,4 @@
-import { App, TFile } from "obsidian";
+import { App, Notice, TFile } from "obsidian";
 
 export class ContextFile {
   private path: string;
@@ -42,14 +42,16 @@ export class ContextFileList {
 
   add(path: string, enabled: boolean = true) {
     const found = this.contextFiles.find((contextFile: ContextFile) => {
-        return contextFile.getPath() === path;
+      return contextFile.getPath() === path;
     });
 
     if (found) {
-        return; // Return from the outer add method if a matching path is found
+      new Notice("'" + path + "' already is a context file.");
+      return; // Return from the outer add method if a matching path is found
     }
 
     this.contextFiles.push(new ContextFile(path, enabled));
+    new Notice("'" + path + "' was added to context files.");
   }
 
   getAll(): ContextFile[] {
