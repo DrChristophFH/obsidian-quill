@@ -13,7 +13,7 @@ export default class Quill extends Plugin {
   fetcher: Fetcher = new MockFetcher();
   contextFiles: ContextFiles = new ContextFiles();
 
-  private async getTextForFile(path: string) {
+  private async getTextForFile(path: string) : Promise<string> {
     let text: string = "";
     const { vault } = this.app;
     const file = app.vault.getAbstractFileByPath(path);
@@ -124,15 +124,9 @@ export default class Quill extends Plugin {
         if (activeFile !== null) {
           if (!checking) {
             this.contextFiles.add(activeFile.path);
-            console.log(
-              this.getTextForFile(activeFile.path)
-                .then((text: string) => {
-                  console.log(text); // Access the resolved text here
-                })
-                .catch((error) => {
-                  console.error(error); // Handle any potential errors
-                })
-            );
+            this.getTextForFile(activeFile.path).then((content) => {;
+              console.log(content);
+            });
           }
           return true;
         }
