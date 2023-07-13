@@ -1,10 +1,10 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 import { ViewPlugin, PluginValue, ViewUpdate, EditorView } from '@codemirror/view';
 import { RenderPlugin, renderPluginSpec } from 'inline_suggestions/RenderPlugin';
 import { suggestionField, setSuggestion, setSuggestionText } from 'inline_suggestions/InlineSuggestionStateField';
 import { QuillMenuView, VIEW_TYPE_QUILL_MENU } from 'side_view/QuillView';
 import { Fetcher, MockFetcher } from 'gpt/Fetcher';
-import { ContextFiles } from 'gpt/ContextFiles';
+import { ContextFiles, ContextFile } from 'gpt/ContextFiles';
 import { QuillSettingTab } from 'settings/SettingTab';
 import { QuillSettings, DEFAULT_SETTINGS } from 'settings/Settings';
 
@@ -14,6 +14,23 @@ export default class Quill extends Plugin {
 	settings: QuillSettings;
 	fetcher: Fetcher = new MockFetcher();
 	contextFiles: ContextFiles = new ContextFiles;
+
+	
+	private async getTextForFile(path: string): Promise<string> {
+		let text: string = '';
+		const { vault } = this.app;
+	  
+		const file = app.vault.getAbstractFileByPath(path);
+		if (file !== null && file instanceof TFile) {
+		  text = await new Promise<string>((resolve) => {
+			vault.read(file).then((result: string) => {
+			  resolve(result);
+			});
+		  });
+		}
+	  
+		return text;
+	}
 
 	async onload() {
 		await this.loadSettings();
@@ -95,9 +112,15 @@ export default class Quill extends Plugin {
 				if (activeFile !== null) {
 					if (!checking) {
 						this.contextFiles.add(activeFile.path);
-						this.contextFiles.getAll().forEach((path: string) => {
-							console.log(path);
-						});
+						console.log(
+							this.getTextForFile(activeFile.path)
+							.then((text: string) => {
+								console.log(text); // Access the resolved text here
+							})
+							.catch((error) => {
+								console.error(error); // Handle any potential errors
+							})
+						);
 					}
 					return true;
 				}
