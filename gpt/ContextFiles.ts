@@ -13,6 +13,10 @@ export class ContextFile {
     return this.path;
   }
 
+  getName() : string {
+    return this.path.split('/').pop() || '';
+  }
+
   setPath(path: string) {
     this.path = path;
   }
