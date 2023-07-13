@@ -1,3 +1,5 @@
+import { App, TFile } from "obsidian";
+
 export class ContextFile {
   private path: string;
   private enabled: boolean;
@@ -22,9 +24,20 @@ export class ContextFile {
   setEnabled(enabled: boolean) {
     this.enabled = enabled;
   }
+
+  async getText(app: App): Promise<string> {
+    let text: string = "";
+    const { vault } = app;
+    const file = app.vault.getAbstractFileByPath(this.path);
+
+    if (file !== null && file instanceof TFile) {
+      text = await vault.cachedRead(file);
+    }
+    return text;
+  }
 }
 
-export class ContextFiles {
+export class ContextFileList {
   private contextFiles: ContextFile[] = [];
 
   add(path: string, enabled: boolean = true) {
@@ -46,4 +59,19 @@ export class ContextFiles {
   clear() {
     this.contextFiles = [];
   }
+
+  async getText(app: App): Promise<string> {
+    const promises = this.getAll().map((contextFile: ContextFile) => {
+      return contextFile.getText(app);
+    });
+  
+    const contents = await Promise.all(promises);
+  
+    let text: string = "";
+    contents.forEach((content: string) => {
+      text += content;
+    });
+  
+    return text;
+  }  
 }
