@@ -1,32 +1,10 @@
-import {
-  App,
-  Editor,
-  MarkdownView,
-  Modal,
-  Notice,
-  Plugin,
-  PluginSettingTab,
-  Setting,
-  TFile,
-} from "obsidian";
-import {
-  ViewPlugin,
-  PluginValue,
-  ViewUpdate,
-  EditorView,
-} from "@codemirror/view";
-import {
-  RenderPlugin,
-  renderPluginSpec,
-} from "inline_suggestions/RenderPlugin";
-import {
-  suggestionField,
-  setSuggestion,
-  setSuggestionText,
-} from "inline_suggestions/InlineSuggestionStateField";
+import { Editor, MarkdownView, Plugin, TFile } from "obsidian";
+import { ViewPlugin, EditorView } from "@codemirror/view";
+import { RenderPlugin, renderPluginSpec } from "inline_suggestions/RenderPlugin";
+import { suggestionField, setSuggestionText } from "inline_suggestions/InlineSuggestionStateField";
 import { QuillMenuView, VIEW_TYPE_QUILL_MENU } from "side_view/QuillView";
 import { Fetcher, MockFetcher } from "gpt/Fetcher";
-import { ContextFiles, ContextFile } from "gpt/ContextFiles";
+import { ContextFiles } from "gpt/ContextFiles";
 import { QuillSettingTab } from "settings/SettingTab";
 import { QuillSettings, DEFAULT_SETTINGS } from "settings/Settings";
 
