@@ -150,6 +150,9 @@ export default class Quill extends Plugin {
       DEFAULT_SETTINGS,
       await this.loadData()
     );
+
+    // Revive contextFileList
+    this.settings.contextFileList = ContextFileList.revive(this.settings.contextFileList);
   }
 
   async saveSettings() {

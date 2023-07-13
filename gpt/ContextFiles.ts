@@ -44,6 +44,12 @@ export class ContextFile {
 export class ContextFileList {
   private contextFiles: ContextFile[] = [];
 
+  static revive(data: any): ContextFileList {
+    const contextFileList = new ContextFileList();
+    contextFileList.contextFiles = data.contextFiles.map((contextFile: any) => new ContextFile(contextFile.path, contextFile.enabled));
+    return contextFileList;
+  }
+
   add(path: string, enabled: boolean = true) {
     this.contextFiles.push(new ContextFile(path, enabled));
   }
