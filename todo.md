@@ -1,6 +1,4 @@
 # Context settings:
-- TODO add special character sequence to enable comments in context files 
-- TODO add setting to set price limit based on estimated price of prompts 
 - TODO add adjectives list to set task for rewrite command (reduce, rephrase, expand, detail, etc.) 
 # Commands:
 - TODO add command to let gpt compress context files 

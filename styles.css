@@ -1,8 +1,13 @@
-/*
+.custom-progress-bar {
+  height: 20px;
+  background-color: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+  color: var(--text-on-accent);
+  text-align: center;
+  border-radius: var(--radius-s) 0 0 var(--radius-s);
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
+.custom-progress-container {
+  height: 20px;
+  background-color: var(--color-base-35);
+  border-radius: var(--radius-s);
+}
