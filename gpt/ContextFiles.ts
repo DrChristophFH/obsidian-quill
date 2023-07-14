@@ -32,7 +32,7 @@ export class ContextFile {
   async getText(app: App): Promise<string> {
     let text: string = "";
     const { vault } = app;
-    const file = app.vault.getAbstractFileByPath(this.path);
+    const file = vault.getAbstractFileByPath(this.path);
 
     if (file !== null && file instanceof TFile) {
       text = await vault.cachedRead(file);
@@ -82,14 +82,16 @@ export class ContextFileList {
 
   async getText(app: App): Promise<string> {
     const promises = this.contextFiles.map((contextFile: ContextFile) => {
-      return contextFile.getText(app);
+      if (contextFile.isEnabled()) // returns 'undefined' for disabled files
+        return contextFile.getText(app);
     });
   
     const contents = await Promise.all(promises);
   
     let text: string = "";
     contents.forEach((content: string) => {
-      text += content + '\n';
+      if (content !== undefined) // 'undefined' values from disabled files are skipped
+        text += content + '\n';
     });
   
     return text;
