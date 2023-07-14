@@ -1,6 +1,7 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
+import { App, PluginSettingTab, Setting, TFile } from 'obsidian';
 import Quill from 'main';
 import { ContextBeforeCursorRange as ContextRange } from 'settings/Settings';
+import { FileSuggestionModal } from './FileSuggestionModal';
 
 export class QuillSettingTab extends PluginSettingTab {
   plugin: Quill;
@@ -54,40 +55,53 @@ export class QuillSettingTab extends PluginSettingTab {
 
   buildContextFilesList(containerEl: HTMLElement) {
     containerEl.empty(); // Clear the container
-    
+
     const contextFileList = this.plugin.settings.contextFileList;
 
+    let files = this.app.vault
+          .getAllLoadedFiles()
+          .filter((filter) => filter instanceof TFile);
+    console.log(files);
+    const modal = new FileSuggestionModal(this.app, files as TFile[]);
+
     new Setting(containerEl)
-    .setHeading()
-    .setName('Context files')
-    .setDesc('List of files to use as context for the prompt.');
+      .setHeading()
+      .setName('Context files')
+      .setDesc('List of files to use as context for the prompt.')
+      .addExtraButton((button) => {
+        button.setIcon('plus-square')
+          .setTooltip('Add a new context file')
+          .onClick(() => {
+            modal.open();
+            modal.onChooseItem = (file) => {
+              contextFileList.add(file.path);
+              this.buildContextFilesList(containerEl);
+            };
+          });
+      });
 
     // Build list of context files settings
     for (const contextFile of contextFileList.getAll()) {
       new Setting(containerEl)
-      .setName(contextFile.getName())
-      .setDesc(contextFile.getPath())
-      .addToggle((toggle) => {
-        toggle
-          .setTooltip('Enable/disable this context file')
-          .setValue(contextFile.isEnabled())
-          .onChange(async (value) => {
-            contextFile.setEnabled(value);
-            await this.plugin.saveSettings();
-          });
-      })
-      .addExtraButton((button) => {
-        button.setIcon('trash-2')
-          .setTooltip('Remove this context file')
-          .onClick(() => {
-            contextFileList.remove(contextFile.getPath());
-            this.buildContextFilesList(containerEl);
-          });
-      });
+        .setName(contextFile.getName())
+        .setDesc(contextFile.getPath())
+        .addToggle((toggle) => {
+          toggle
+            .setTooltip('Enable/disable this context file')
+            .setValue(contextFile.isEnabled())
+            .onChange(async (value) => {
+              contextFile.setEnabled(value);
+              await this.plugin.saveSettings();
+            });
+        })
+        .addExtraButton((button) => {
+          button.setIcon('trash-2')
+            .setTooltip('Remove this context file')
+            .onClick(() => {
+              contextFileList.remove(contextFile.getPath());
+              this.buildContextFilesList(containerEl);
+            });
+        });
     }
   }
 }
-
-
-
-
