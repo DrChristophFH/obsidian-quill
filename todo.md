@@ -1,8 +1,5 @@
 # Context settings:
-- TODO add command to set a specific note as context for prompt 
 - TODO add special character sequence to enable comments in context files 
-- TODO add setting to see context files 
-- TODO add setting to set and remove context files 
 - TODO add setting to set price limit based on estimated price of prompts 
 - TODO add adjectives list to set task for rewrite command (reduce, rephrase, expand, detail, etc.) 
 # Commands:
