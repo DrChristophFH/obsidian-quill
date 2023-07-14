@@ -1,5 +1,8 @@
 import { App, Notice, TFile } from "obsidian";
 
+const commentStart: string = "commentStart"
+const commentEnd: string = "commentEnd";
+
 export class ContextFile {
   private path: string;
   private enabled: boolean;
@@ -29,6 +32,23 @@ export class ContextFile {
     this.enabled = enabled;
   }
 
+  private removeCustomComments(str: string, startComment: string, endComment: string) {
+    // Escape special characters in the start and end comment delimiters
+    let escStartComment = startComment.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    let escEndComment = endComment.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    
+    // Build the regex pattern
+    let pattern = escStartComment + '.*?' + escEndComment;
+    
+    // Create a RegExp object
+    let re = new RegExp(pattern, 'gs'); 
+    
+    // Use replace method to remove the custom comments
+    let result = str.replace(re, '');
+    
+    return result;
+  }
+
   async getText(app: App): Promise<string> {
     let text: string = "";
     const { vault } = app;
@@ -36,6 +56,7 @@ export class ContextFile {
 
     if (file !== null && file instanceof TFile) {
       text = await vault.cachedRead(file);
+      text = this.removeCustomComments(text, commentStart, commentEnd);
     }
     return text;
   }
