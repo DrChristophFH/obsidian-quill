@@ -19,6 +19,24 @@ export class QuillSettingTab extends PluginSettingTab {
 
     containerEl.createEl('h2', { text: 'Quill Settings.' });
 
+    containerEl.createEl('h3', { text: 'API Settings' });
+
+    new Setting(containerEl)
+      .setName('API Key')
+      .setDesc('Your API key for the API you are using.')
+      .addText((text) => {
+        text
+          .setPlaceholder('API Key')
+          .setValue(settings.apiKey)
+          .onChange(async (value) => {
+            settings.apiKey = value;
+            await this.plugin.saveSettings();
+          });
+        text.inputEl.type = 'password'; // hide the key
+      });
+
+    containerEl.createEl('h3', { text: 'Context Settings' });
+
     new Setting(containerEl)
       .setName('Context before cursor (characters)')
       .setDesc('Determines how many characters before the cursor are supplied as context to the prompt.')
@@ -52,6 +70,8 @@ export class QuillSettingTab extends PluginSettingTab {
 
     const contextFileListContainer = containerEl.createDiv();
     this.buildContextFilesList(contextFileListContainer);
+
+    containerEl.createEl('h3', { text: 'Price Settings' });
 
     new Setting(containerEl)
       .setName('Price per 1k tokens')

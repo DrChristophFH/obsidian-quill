@@ -8,6 +8,7 @@ export enum ContextBeforeCursorRange {
 }
 
 export interface QuillSettings {
+  apiKey: string;
 	contextBeforeCursor: number;
   contextBeforeCursorRange: ContextBeforeCursorRange;
   contextFileList: ContextFileList; 
@@ -18,6 +19,7 @@ export interface QuillSettings {
 }
 
 export const DEFAULT_SETTINGS: QuillSettings = {
+  apiKey: '',
 	contextBeforeCursor: 100,
   contextBeforeCursorRange: ContextBeforeCursorRange.Characters,
   contextFileList: new ContextFileList(),
