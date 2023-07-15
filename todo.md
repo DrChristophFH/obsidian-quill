@@ -1,5 +1,4 @@
 # Context settings:
-- TODO add adjectives list to set task for rewrite command (reduce, rephrase, expand, detail, etc.) 
 # Commands:
 - TODO add command to let gpt compress context files 
 - TODO add command to let gpt rewrite selected text without context files (shallow rewrite) 

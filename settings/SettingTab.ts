@@ -2,6 +2,7 @@ import { App, PluginSettingTab, Setting, TFile, TextComponent } from 'obsidian';
 import Quill from 'main';
 import { ContextBeforeCursorRange as ContextRange, QuillSettings } from 'settings/Settings';
 import { FileSuggestionModal } from './FileSuggestionModal';
+import { RewritePromptModal } from './RewritePromptModal';
 
 export class QuillSettingTab extends PluginSettingTab {
   plugin: Quill;
@@ -36,6 +37,7 @@ export class QuillSettingTab extends PluginSettingTab {
       });
 
     containerEl.createEl('h3', { text: 'Context Settings' });
+    containerEl.createEl('h4', { text: 'In File Context' });
 
     new Setting(containerEl)
       .setName('Context before cursor (characters)')
@@ -67,9 +69,14 @@ export class QuillSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           });
       });
-
+    
+    containerEl.createEl('h4', { text: 'Additional Context' });
     const contextFileListContainer = containerEl.createDiv();
     this.buildContextFilesList(contextFileListContainer);
+
+    containerEl.createEl('h4', { text: 'Rewrite Context' });
+    const rewritePromptsContainer = containerEl.createDiv();
+    this.buildRewritePromptList(rewritePromptsContainer);
 
     containerEl.createEl('h3', { text: 'Price Settings' });
 
@@ -178,6 +185,62 @@ export class QuillSettingTab extends PluginSettingTab {
             });
         });
     }
+  }
+
+  buildRewritePromptList(containerEl: HTMLElement) {
+      containerEl.empty(); // Clear the container
+
+      const rewritePrompts = this.plugin.settings.rewritePrompts;
+  
+      new Setting(containerEl)
+        .setName('Rewrite Prompts')
+        .setDesc('A list of prompts from which you can select to specify how the selected text should be rewritten.')
+        .addExtraButton((button) => {
+          button.setIcon('plus-square')
+            .setTooltip('Add a new prompt')
+            .onClick(() => {
+              new RewritePromptModal(this.app, (prompt) => {
+                rewritePrompts.push(prompt);
+                this.buildRewritePromptList(containerEl);
+              }).open();
+            });
+        });
+  
+      // Build list of prompts
+      for (const prompt of rewritePrompts) {
+        new Setting(containerEl)
+          .setName(prompt.name)
+          .setDesc(prompt.prompt)
+          .addToggle((toggle) => {
+            toggle
+              .setTooltip('Enable/disable prompt')
+              .setValue(prompt.enabled)
+              .onChange(async (value) => {
+                prompt.enabled = value;
+                await this.plugin.saveSettings();
+              });
+          })
+          .addExtraButton((button) => {
+            button
+              .setTooltip('Edit this prompt')
+              .setIcon('pencil')
+              .onClick(() => {
+                new RewritePromptModal(this.app, (newPrompt) => {
+                  prompt.name = newPrompt.name;
+                  prompt.prompt = newPrompt.prompt;
+                  this.buildRewritePromptList(containerEl);
+                }, prompt).open();
+              });
+          })
+          .addExtraButton((button) => {
+            button.setIcon('trash-2')
+              .setTooltip('Remove this prompt')
+              .onClick(() => {
+                rewritePrompts.remove(prompt);
+                this.buildRewritePromptList(containerEl);
+              });
+          });
+      }
   }
 
   buildProgressBar(settingElement: Setting, settings: QuillSettings) {

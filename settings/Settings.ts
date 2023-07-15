@@ -7,6 +7,12 @@ export enum ContextBeforeCursorRange {
   Section = 'section',
 }
 
+export interface RewritePrompt {
+  name: string;
+  prompt: string;
+  enabled: boolean;
+}
+
 export interface QuillSettings {
   apiKey: string;
 	contextBeforeCursor: number;
@@ -16,6 +22,7 @@ export interface QuillSettings {
   currentTokensSpent: number;
   maximumMonthlySpend: number;
   lastMonthlySpendReset: Date;
+  rewritePrompts: RewritePrompt[];
 }
 
 export const DEFAULT_SETTINGS: QuillSettings = {
@@ -27,4 +34,5 @@ export const DEFAULT_SETTINGS: QuillSettings = {
   currentTokensSpent: 50000,
   maximumMonthlySpend: 130,
   lastMonthlySpendReset: new Date(),
+  rewritePrompts: [],
 }
