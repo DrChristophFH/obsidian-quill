@@ -18,7 +18,7 @@ export default class Quill extends Plugin {
 
     this.registerView(
       VIEW_TYPE_QUILL_MENU,
-      (leaf) => new QuillMenuView(leaf)
+      (leaf) => new QuillMenuView(leaf, this, this.app)
     );
 
     // This adds a settings tab so the user can configure various aspects of the plugin

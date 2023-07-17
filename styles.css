@@ -11,3 +11,8 @@
   background-color: var(--color-base-35);
   border-radius: var(--radius-s);
 }
+
+.side-view-setting {
+  flex-wrap: wrap;
+  gap: 10px 0px;
+}

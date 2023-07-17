@@ -6,11 +6,9 @@
   - the rewrite command task (reduce, rephrase, expand, detail, etc.) are determined by the adjectives list 
 - TODO add commands to context menu (right click on selected text) 
 # Model settings:
-- TODO add settings for api key (hidden via password field)
 - TODO add settings for model parameters 
 # Side Tab view (right side of obsidian):
-- TODO add show and edit for important settings that change frequently (context files, context length, model parameters) 
-  - keep context files in a list with enabled/disabled toggle and remove button for fast configuration
+- TODO add show and edit for important settings that change frequently (context files, context length, model parameters)
 - TODO add token estimate for context to side tab view (based on OpenAI estimate function) 
 - TODO add price estimate for context to side tab view (based on token estimate and configurable api price) 
 - TODO add request statistics to side tab view (how many requests sent, how many tokens used) 
