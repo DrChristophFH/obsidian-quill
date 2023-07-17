@@ -56,8 +56,8 @@ export class SettingsBuilder {
 
   public buildContextFilesList(containerEl: HTMLElement) {
     containerEl.createEl('h4', { text: 'Additional Context' });
-    const contextFileListContainer = containerEl.createDiv();
-
+    const contextFileListContainer: HTMLElement = this.getContainer(containerEl, 'context-files-container');
+    
     contextFileListContainer.empty(); // Clear the container
 
     const contextFileList = this.plugin.settings.contextFileList;
@@ -78,7 +78,7 @@ export class SettingsBuilder {
             modal.open();
             modal.onChooseItem = (file) => {
               contextFileList.add(file.path);
-              this.buildContextFilesList(contextFileListContainer);
+              this.buildContextFilesList(containerEl);
             };
           });
       })
@@ -103,7 +103,7 @@ export class SettingsBuilder {
             .setTooltip('Remove this context file')
             .onClick(() => {
               contextFileList.remove(contextFile.getPath());
-              this.buildContextFilesList(contextFileListContainer);
+              this.buildContextFilesList(containerEl);
             });
         })
         .settingEl.addClass(...this.cssClasses);
@@ -111,9 +111,9 @@ export class SettingsBuilder {
   }
 
   public buildRewritePromptList(containerEl: HTMLElement) {
-    containerEl.createEl('h4', { text: 'Rewrite Context' });
-    const rewritePromptsContainer = containerEl.createDiv();
-    rewritePromptsContainer.empty(); // Clear the container
+    // re-use the container if it already exists
+    const rewritePromptsContainer: HTMLElement = this.getContainer(containerEl, 'rewrite-prompts-container');
+    rewritePromptsContainer.createEl('h4', { text: 'Rewrite Context' });
 
     const rewritePrompts = this.plugin.settings.rewritePrompts;
 
@@ -126,7 +126,7 @@ export class SettingsBuilder {
           .onClick(() => {
             new RewritePromptModal(this.app, (prompt) => {
               rewritePrompts.push(prompt);
-              this.buildRewritePromptList(rewritePromptsContainer);
+              this.buildRewritePromptList(containerEl);
             }).open();
           });
       })
@@ -154,7 +154,7 @@ export class SettingsBuilder {
               new RewritePromptModal(this.app, (newPrompt) => {
                 prompt.name = newPrompt.name;
                 prompt.prompt = newPrompt.prompt;
-                this.buildRewritePromptList(rewritePromptsContainer);
+                this.buildRewritePromptList(containerEl);
               }, prompt).open();
             });
         })
@@ -163,11 +163,30 @@ export class SettingsBuilder {
             .setTooltip('Remove this prompt')
             .onClick(() => {
               rewritePrompts.remove(prompt);
-              this.buildRewritePromptList(rewritePromptsContainer);
+              this.buildRewritePromptList(containerEl);
             });
         })
         .settingEl.addClass(...this.cssClasses);
     }
+  }
+
+  /**
+   * Finds the container element in the given container element, or creates it if it doesn't exist
+   * @param {HTMLElement} containerEl the container element to search for
+   * @param {strign} selector the selector to apply
+   * @returns {HTMLElement} the container element
+   */
+  private getContainer(containerEl: HTMLElement, id: string): HTMLElement {
+    const previousContainer = containerEl.querySelector('#' + id) as HTMLElement;
+    let rewritePromptsContainer: HTMLElement;
+    if (previousContainer) {
+      previousContainer.empty();	
+      rewritePromptsContainer = previousContainer;
+    } else {
+      rewritePromptsContainer = containerEl.createDiv();
+      rewritePromptsContainer.id = id;
+    }
+    return rewritePromptsContainer;
   }
 
   public buildPriceSettings(containerEl: HTMLElement) {
